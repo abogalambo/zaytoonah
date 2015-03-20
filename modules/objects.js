@@ -1,66 +1,74 @@
 (function(){
   Zaytoonah = window.Zaytoonah || {};
-  Zaytoonah.object = function(){
+  Zaytoonah.object = function(identifier){
     var that = {};
-    that.type = "";
-    that.is = function(other){};
+    that.identifier = function(){
+      return identifier;
+    }
+    that.matches = function(other){
+      return identifier === other.identifier();
+    };
     return that;
   }
 
   Zaytoonah.textObject = function(options){
     options = options || {};
-    var that = Zaytoonah.object();
+    var text = options.text,
+        that = Zaytoonah.object(options.identifier || text);
     that.type = "text";
 
-    var text = options.text;
     var getText = function(){
       return text;
     }
     that.getText = getText;
-
-    that.is = function(other){
-      return typeof(other.getText) == "function" && text === other.getText();
-    };
     return that;
   }
 
   Zaytoonah.imageObject = function(options){
     options = options || {};
-    var that = Zaytoonah.object();
+    var image = null,
+        imageURL = options.imageURL,
+        imageLoaded = false,
+        that = Zaytoonah.object(options.identifier);
     that.type = "image";
 
-    var image = options.image;
     var loadImage = function(callback){
     }
+    that.load = loadImage;
 
     var getImage = function(){
       return image;
     }
     that.getImage = getImage;
 
-    that.is = function(other){
-      return image === other.getImage();
-    };
+    if(options.preload){
+      loadImage();
+    }
+
     return that;
   }
 
-  Zaytoonah.audiObject = function(options){
+  Zaytoonah.audioObject = function(options){
     options = options || {};
-    var that = Zaytoonah.object();
+    var audio = null,
+        audioURL = options.audioURL,
+        audioLoaded = false;
+        that = Zaytoonah.object(options.identifier);
     that.type = "audio";
 
-    var audio = options.audio;
     var loadAudio = function(callback){
     }
+    that.load = loadAudio;
 
     var getAudio = function(){
       return audio;
     }
     that.getAudio = getAudio;
 
-    that.is = function(other){
-      return audi === other.getAudio();
-    };
+    if(options.preload){
+      loadAudio();
+    }
+
     return that;
   }
 })();
