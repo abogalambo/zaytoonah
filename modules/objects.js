@@ -52,21 +52,37 @@
     options = options || {};
     var audio = null,
         audioURL = options.audioURL,
-        audioLoaded = false;
+        audioLoaded = false,
+        context = Zaytoonah.getContext();
         that = Zaytoonah.object(options.identifier);
     that.type = "audio";
 
-    var loadAudio = function(callback){
+    var load = function(){
+      var assetLoader = Zaytoonah.getAssetLoader();
+      assetLoader.addAsset(audioURL, "audio", function(buffer){
+        audio = buffer;
+        audioLoaded = true;
+      });
     }
-    that.load = loadAudio;
+    that.load = load;
 
     var getAudio = function(){
       return audio;
     }
     that.getAudio = getAudio;
 
+    var play = function(){
+      if(audioLoaded){
+        var source = context.createBufferSource(); // creates a sound source
+        source.buffer = audio;                     // tell the source which sound to play
+        source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+        source.start(0);                           // play the source now
+      }
+    }
+    that.play = play;
+
     if(options.preload){
-      loadAudio();
+      load();
     }
 
     return that;
