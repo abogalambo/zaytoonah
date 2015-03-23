@@ -55,7 +55,7 @@
     init: function(){
       // Fix up prefixing
       AudioContext = window.AudioContext || window.webkitAudioContext;
-      var context = new AudioContext();
+      context = new AudioContext();
     },
     addAsset: function(url, type, callback){
       var assets;
@@ -64,7 +64,7 @@
       }else if(type == "image"){
         assets = images;
       }
-      if(assets[url] !== undefined){
+      if(assets[url] === undefined){
         assets[url] = [];
         totalAssets++ ;
       }
