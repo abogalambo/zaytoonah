@@ -32,9 +32,14 @@
         that = Zaytoonah.object(options.identifier);
     that.type = "image";
 
-    var loadImage = function(callback){
+    var load = function(){
+      var assetLoader = Zaytoonah.getAssetLoader();
+      assetLoader.addAsset(imageURL, "image", function(loadedImage){
+        image = loadedImage;
+        imageLoaded = true;
+      });
     }
-    that.load = loadImage;
+    that.load = load;
 
     var getImage = function(){
       return image;
@@ -42,7 +47,7 @@
     that.getImage = getImage;
 
     if(options.preload){
-      loadImage();
+      load();
     }
 
     return that;

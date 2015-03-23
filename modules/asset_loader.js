@@ -48,6 +48,18 @@
     request.send();
   }
   function loadImage(url){
+    var image = new Image();
+    image.onload = function(){
+      loadedCount++;
+      callbacks = images[url];
+      for(var i = 0; i< callbacks.length; i++){
+        callbacks[i](image);
+      }
+      if (loadedCount == totalAssets){
+        loadedCallback();
+      }
+    };
+    image.src = url;
   }
 
   // asset loader public API
