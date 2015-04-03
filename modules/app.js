@@ -28,13 +28,13 @@ var io2 = Zaytoonah.imageObject({
 io2.load()
 
 
-al.load(function(){
+al.load().then(function(){
   console.log("all loaded");
   ao.play();
   ao2.play();
   ao3.play();
   document.body.appendChild(io.getImage());
   document.body.appendChild(io2.getImage());
-});
+}, console.log);
 
 });

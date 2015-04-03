@@ -34,10 +34,11 @@
 
     var load = function(){
       var assetLoader = Zaytoonah.getAssetLoader();
-      assetLoader.addAsset(imageURL, "image", function(loadedImage){
+      assetLoader.addAsset(imageURL, "image")
+      .then( function(loadedImage) {
         image = loadedImage;
         imageLoaded = true;
-      });
+      }, console.log );
     }
     that.load = load;
 
@@ -46,10 +47,7 @@
     }
     that.getImage = getImage;
 
-    if(options.preload){
-      load();
-    }
-
+    load();
     return that;
   }
 
@@ -64,10 +62,10 @@
 
     var load = function(){
       var assetLoader = Zaytoonah.getAssetLoader();
-      assetLoader.addAsset(audioURL, "audio", function(buffer){
+      assetLoader.addAsset(audioURL, "audio").then( function(buffer){
         audio = buffer;
         audioLoaded = true;
-      });
+      }, console.log);
     }
     that.load = load;
 
@@ -86,10 +84,7 @@
     }
     that.play = play;
 
-    if(options.preload){
-      load();
-    }
-
+    load();
     return that;
   }
 })();

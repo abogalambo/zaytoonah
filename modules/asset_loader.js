@@ -5,15 +5,12 @@
     assetLoader.init();
   }, false);
 
-  var sounds = {}; // url => callbacks array
-  var images = {}; // url => callbacks array
-  var loadedCount = 0;
-  var totalAssets = 0;
-  var loadedCallback;
+  var promises = [];
 
   function loadAudio(url){
     // Load buffer asynchronously
     var request = new XMLHttpRequest();
+    var deferred = Q.defer();
     request.open("GET", url, true);
     request.responseType = "arraybuffer";
 
@@ -22,44 +19,37 @@
       context.decodeAudioData(
         request.response,
         function(buffer) {
-          loadedCount++;
           if (!buffer) {
-            alert('error decoding file data: ' + url);
+            deferred.reject(new Error('error decoding file data: ' + url));
             return;
           }
-          callbacks = sounds[url];
-          for(var i = 0; i< callbacks.length; i++){
-            callbacks[i](buffer);
-          }
-          if (loadedCount == totalAssets){
-            loadedCallback();
-          }
+          deferred.resolve(buffer);
         },
         function(error) {
-          console.error('decodeAudioData error', error);
+          deferred.reject(new Error('error decoding file data: ' + url));
         }
       );
     }
 
     request.onerror = function() {
-      alert('BufferLoader: XHR error');
+      deferred.reject(new Error('error decoding file data: ' + url));
     }
 
     request.send();
+    return deferred.promise;
   }
+
   function loadImage(url){
     var image = new Image();
+    var deferred = Q.defer();
     image.onload = function(){
-      loadedCount++;
-      callbacks = images[url];
-      for(var i = 0; i< callbacks.length; i++){
-        callbacks[i](image);
-      }
-      if (loadedCount == totalAssets){
-        loadedCallback();
-      }
+      deferred.resolve(image);
+    };
+    image.onerror = function(error){
+      deferred.reject(error, url);
     };
     image.src = url;
+    return deferred.promise;
   }
 
   // asset loader public API
@@ -69,28 +59,20 @@
       AudioContext = window.AudioContext || window.webkitAudioContext;
       context = new AudioContext();
     },
-    addAsset: function(url, type, callback){
-      var assets;
-      if(type == 'audio'){
-        assets = sounds;
-      }else if(type == "image"){
-        assets = images;
-      }
-      if(assets[url] === undefined){
-        assets[url] = [];
-        totalAssets++ ;
-      }
-      assets[url].push(callback);
 
+    addAsset: function(url, type){
+      var promise;
+      if(type == 'audio'){
+        promise = loadAudio(url);
+      }else if(type == "image"){
+        promise = loadImage(url);
+      }
+      promises.push(promise);
+      return promise;
     },
-    load: function(callback){
-      loadedCallback = callback || function(){};
-      for(url in sounds){
-        loadAudio(url);
-      }
-      for(url in images){
-        loadImage(url);
-      }
+
+    load: function(){
+      return Q.allSettled(promises)
     }
   };
   Zaytoonah.getAssetLoader = function(){
