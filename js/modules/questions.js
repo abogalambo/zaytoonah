@@ -5,13 +5,12 @@
     var that = {};
     var question = options.question
     var answers = options.answers || [];
-    var correctAnswer = options.correctAnswer || null;
     that.type = "mc";
+    that.question = question;
+    that.answers = answers;
 
     var check = function(choice){
-      if(correctAnswer)
-        return correctAnswer.is(choice);
-      return false;
+      return question.matches(choice);
     }
     that.check = check;
     return that;

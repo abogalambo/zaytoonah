@@ -1,52 +1,46 @@
-var slides = [
+var data = [
   {
-    text: 'Are you ready?'
-  },
-  {
+    intro: 'Are you ready?',
+    audio: 'intro.mp3'
+  },{
     question: {
-      audio: "letters/Aa.mp3"
-
+      audio: "alph/A.mp3",
+      images: [
+        "alph/E.jpg",
+        "alph/A.jpg",
+        "alph/O.jpg",
+        "alph/Aa.jpg"
+      ]
+    }
+  },{
+    question: {
+      text:[ "بَ", "ba"],
+      sounds: [
+        "alph/ba.mp3",
+        "alph/ta.mp3",
+        "alph/tha.mp3",
+        "alph/na.mp3"
+      ]
+    }
+  },{
+    question: {
+      text:[ "بَ", "ba"],
+      images: [
+        "alph/ba.mp3",
+        "alph/ta.mp3",
+        "alph/tha.mp3",
+        "alph/na.mp3"
+      ]
     }
   }
 ]
 
 window.addEventListener('load', function(){
-
-var al = Zaytoonah.getAssetLoader();
-var ao = Zaytoonah.audioObject({
-  audioURL:"sounds/sound.wav",
-  identifier:"Ahah"
-});
-ao.load()
-var ao2 = Zaytoonah.audioObject({
-  audioURL:"sounds/sound2.wav",
-  identifier:"Ahah"
-});
-ao2.load()
-var ao3 = Zaytoonah.audioObject({
-  audioURL:"sounds/sound3.wav",
-  identifier:"Ahah"
-});
-ao3.load()
-var io = Zaytoonah.imageObject({
-  imageURL:"http://www.rantlifestyle.com/wp-content/uploads/2014/07/happy2.jpg",
-  identifier:"cat"
-});
-io.load()
-var io2 = Zaytoonah.imageObject({
-  imageURL:"http://upload.wikimedia.org/wikipedia/commons/e/eb/Happy_boys.jpg",
-  identifier:"happy"
-});
-io2.load()
-
-
-al.load().then(function(){
-  console.log("all loaded");
-  ao.play();
-  ao2.play();
-  ao3.play();
-  document.body.appendChild(io.getImage());
-  document.body.appendChild(io2.getImage());
-}, console.log);
+  var slides = Zaytoonah.getFactory().createSlides(data);
+  var al = Zaytoonah.getAssetLoader();
+  al.load().then(function(){
+    console.log("all loaded");
+    console.log(slides);
+  }, console.log);
 
 });
