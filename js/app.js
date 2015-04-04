@@ -1,3 +1,15 @@
+var slides = [
+  {
+    text: 'Are you ready?'
+  },
+  {
+    question: {
+      audio: "letters/Aa.mp3"
+
+    }
+  }
+]
+
 window.addEventListener('load', function(){
 
 var al = Zaytoonah.getAssetLoader();
