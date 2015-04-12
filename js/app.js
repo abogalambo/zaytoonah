@@ -15,9 +15,12 @@
       _this.slides = Zaytoonah.getFactory().createSlides(data);
       var al = Zaytoonah.getAssetLoader();
       al.load().then(function(){
-        console.log("all loaded");
-        _this.loaded = true;
-        $scope.$apply();
+        $scope.$apply(
+          function(){
+            console.log("all loaded");
+            _this.loaded = true;
+          }
+        );
       }, console.log);
     });
 
@@ -28,8 +31,22 @@
       this.active = this.active + 1;
     }
     this.prevSlide = function(){
-      this.active = this.active - 1;
+      if(this.active != 0){
+        this.active = this.active - 1;
+      }
     }
+
+    window.next = function(){
+      $scope.$apply(function(){
+        _this.nextSlide();
+      });
+    };
+
+    window.prev = function(){
+      $scope.$apply(function(){
+        _this.prevSlide();
+      });
+    };
 
 		this.toggleDir = function(){
 			if(this.currentDir == 'rtl'){
@@ -57,25 +74,36 @@
 			if(this.currentDir == 'ltr') multiplier = -1;
 			return {left: 100 * multiplier * (this.active - i) + "%"}
 		}
-
-		// var that = this;
-    // $scope.$watch(function () { return $state.$current.name; }, function (newVal) {
-    // 	var matches = that.pages.filter(function(page){
-    // 		return $state.includes(page);
-    // 	})
-    // 	if(matches.length == 0){
-    // 		that.active = 0;
-    // 	}else{
-    // 		that.active = that.pages.indexOf(matches[0]);
-    // 	}
-		// });
 	});
 
   app.controller('SlideController', function($scope, $state){
     this.slide = $scope.slide;
     this.display = function(){
-      console.log("Display this slide", this.slide)
+      if(this.slide.type === 'intro'){
+        if(this.slide.audio){
+          this.slide.audio.play();
+        }
+      }else if(this.slide.type === 'question'){
+      }
     }
+
+    this.stop = function(){
+      if(this.slide.type === 'intro'){
+        if(this.slide.audio){
+          this.slide.audio.stop();
+        }
+      }else if(this.slide.type === 'question'){
+      }
+    }
+
+    var _this = this;
+    $scope.$watch(function () { return $scope.quiz.active }, function (newVal, oldVal) {
+      if(newVal === $scope.$index){
+        _this.display();
+      }else if(oldVal === $scope.$index){
+        _this.stop();
+      }
+    });
   });
 
 })();
@@ -83,7 +111,7 @@
 var data = [
   {
     intro: 'Are you ready?',
-    audio: 'intro.mp3'
+    audio: 'sound3.wav'
   },{
     question: {
       audio: "alph/A.mp3",

@@ -54,6 +54,7 @@
   Zaytoonah.audioObject = function(options){
     options = options || {};
     var audio = null,
+        source = null,
         audioURL = options.audioURL,
         audioLoaded = false,
         context = Zaytoonah.getContext();
@@ -76,13 +77,20 @@
 
     var play = function(){
       if(audioLoaded){
-        var source = context.createBufferSource(); // creates a sound source
+        source = context.createBufferSource(); // creates a sound source
         source.buffer = audio;                     // tell the source which sound to play
         source.connect(context.destination);       // connect the source to the context's destination (the speakers)
         source.start(0);                           // play the source now
       }
     }
     that.play = play;
+
+    var stop = function(){
+      if(source){
+        source.stop();
+      }
+    }
+    that.stop = stop;
 
     load();
     return that;
