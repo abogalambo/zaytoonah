@@ -76,7 +76,7 @@
 		}
 	});
 
-  app.controller('SlideController', function($scope, $state){
+  app.controller('SlideController', function($scope, $state, $window){
     this.slide = $scope.slide;
     this.display = function(){
       if(this.slide.type === 'intro'){
@@ -95,6 +95,30 @@
       }else if(this.slide.type === 'question'){
       }
     }
+
+    this.isActive = function(){
+      return $scope.quiz.active === $scope.$index;
+    }
+
+    this.keydown = function(event){
+      if(event.which === 39){
+        $scope.quiz.prevSlide();
+      }else if(this.slide.type === 'intro'){
+        if(event.which === 32 || event.which === 13 || event.which === 37){
+          $scope.quiz.nextSlide();
+        }
+      }
+    }
+
+    //handling key presses
+    var _this = this;
+    $window.document.addEventListener("keydown", function(evt) {
+      if(_this.isActive()){
+        $scope.$apply(function(){
+          _this.keydown(event);
+        });
+      }
+    });
 
     var _this = this;
     $scope.$watch(function () { return $scope.quiz.active }, function (newVal, oldVal) {
