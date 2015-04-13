@@ -1,0 +1,8 @@
+<div>
+  <object ng-init="objectCtrl.setObj(questionCtrl.question.question)"></object>
+  <hr/>
+  <object ng-repeat="answer in question.answers" ng-click="questionCtrl.answer(answer)" ng-init="objectCtrl.setObj(answer)"></object>
+
+  <h1 ng-if="questionCtrl.status === 'correct'"> Correct </h1>
+  <h1 ng-if="questionCtrl.status === 'wrong'"> Wrong! </h1>
+</div>

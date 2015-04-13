@@ -47,6 +47,11 @@
     }
     that.getImage = getImage;
 
+    var getImageURL = function(){
+      return imageURL;
+    }
+    that.getImageURL = getImageURL;
+
     load();
     return that;
   }

@@ -27,24 +27,24 @@
 		this.currentDir = 'rtl';
     this.active = 0;
 
-    this.nextSlide = function(){
-      this.active = this.active + 1;
+    $scope.nextSlide = function(){
+      _this.active = _this.active + 1;
     }
-    this.prevSlide = function(){
-      if(this.active != 0){
-        this.active = this.active - 1;
+    $scope.prevSlide = function(){
+      if(_this.active != 0){
+        _this.active = _this.active - 1;
       }
     }
 
     window.next = function(){
       $scope.$apply(function(){
-        _this.nextSlide();
+        $scope.nextSlide();
       });
     };
 
     window.prev = function(){
       $scope.$apply(function(){
-        _this.prevSlide();
+        $scope.prevSlide();
       });
     };
 
@@ -84,6 +84,7 @@
           this.slide.audio.play();
         }
       }else if(this.slide.type === 'question'){
+        $scope.question = this.slide.question;
       }
     }
 
@@ -102,10 +103,10 @@
 
     this.keydown = function(event){
       if(event.which === 39){
-        $scope.quiz.prevSlide();
+        $scope.prevSlide();
       }else if(this.slide.type === 'intro'){
         if(event.which === 32 || event.which === 13 || event.which === 37){
-          $scope.quiz.nextSlide();
+          $scope.nextSlide();
         }
       }
     }
@@ -130,6 +131,47 @@
     });
   });
 
+  app.directive('question', function(){
+    return {
+      restrict: 'E',
+      templateUrl: 'templates/question.html',
+      controller: function($scope){
+        this.setQuestion = function(q){
+          this.question = q;
+        }
+        this.status = 'new';
+        this.answer = function(answer){
+          if(this.status == 'new'){
+            if(this.question.check(answer)){
+              this.status = 'correct';
+            }else{
+              this.status = 'wrong';
+            }
+            // TODO this shouldn't be here
+            $scope.nextSlide();
+          }
+        }
+      },
+      controllerAs: 'questionCtrl'
+    };
+  });
+
+  app.directive('object', function(){
+    return {
+      restrict: 'E',
+      templateUrl: 'templates/object.html',
+      controller: function(){
+        this.setObj = function(object){
+          this.object = object;
+          if(object.type === 'image'){
+            console.log(object.getImage());
+          }
+        }
+      },
+      controllerAs: 'objectCtrl'
+    };
+  });
+
 })();
 
 var data = [
@@ -138,12 +180,12 @@ var data = [
     audio: 'sound3.wav'
   },{
     question: {
-      audio: "alph/A.mp3",
+      audio: "Aa.wav",
       images: [
-        "alph/E.jpg",
+        "alph/E.jpeg",
         "alph/A.jpg",
         "alph/O.jpg",
-        "alph/Aa.jpg"
+        "alph/Aa.png"
       ]
     }
   },{

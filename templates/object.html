@@ -1,0 +1,11 @@
+<div ng-if="objectCtrl.object.type === 'audio'">
+  <button ng-click="objectCtrl.object.play()">Play</button>
+</div>
+
+<div ng-if="objectCtrl.object.type === 'image'">
+  <img ng-src="{{ objectCtrl.object.getImageURL() }}">
+</div>
+
+<div ng-if="objectCtrl.object.type === 'text'">
+  <div>{{objectCtrl.object.getText()}}</div>
+</div>

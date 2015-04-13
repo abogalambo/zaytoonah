@@ -63,7 +63,7 @@
       var identifier = (/\/([a-z1-9]*)\./ig).exec(url);
       return Zaytoonah.audioObject({
         audioURL: url,
-        identifier: identifier
+        identifier: identifier[1]
       });
     },
 
@@ -72,7 +72,7 @@
       var identifier = (/\/([a-z1-9]*)\./ig).exec(url);
       return Zaytoonah.imageObject({
         imageURL: url,
-        identifier: identifier
+        identifier: identifier[1]
       });
     },
 

@@ -19,12 +19,15 @@
           ng-if="quiz.loaded"
           ng-controller="SlideController as sc"
     >
-      <div ng-if="slide.type === 'intro'" ng-keypress="quiz.nextSlide">
-      {{slide.intro}}<br/>
-      Press space to continue
+
+      <div ng-if="slide.type === 'intro'">
+        {{slide.intro}}
+        <br/>
+        Press space to continue
       </div>
+
       <div ng-if="slide.type === 'question'">
-        
+        <question ng-init="questionCtrl.setQuestion(slide.question)"></question>
       </div>
     </div>
   </div>
