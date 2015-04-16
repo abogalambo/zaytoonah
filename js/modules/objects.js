@@ -10,9 +10,8 @@
 
     Z.create = function(module, options){
       var initial = {};
-      initial.extend = function(mod,opts){
-        extend.call(initial, mod, opts);
-        return this;
+      initial.extend = function(){
+        return extend.apply(this, arguments);
       }
       if(module){
         initial.extend(module, options);
@@ -22,7 +21,7 @@
     return Z;
   })();
 
-  // Zee.create('audio', options).extend('text', options)
+  // t = Zee.create().extend('text', {text:'momma'}).extend('audio',{audioURL:""}).extend('image', {imageURL:""})
 
   Zee.text = function(object, options){
     var that = object;
