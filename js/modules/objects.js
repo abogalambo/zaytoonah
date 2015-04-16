@@ -1,101 +1,95 @@
 (function(){
-  Zaytoonah = window.Zaytoonah || {};
-  Zaytoonah.object = function(identifier){
-    var that = {};
-    that.identifier = function(){
-      return identifier;
+  Zee = (function(){
+    var Z = {};
+    var extend = function(module, options){
+      if(typeof Zee[module] === 'function'){
+        return Zee[module](this, options);
+      }
+      return this;
     }
-    that.matches = function(other){
-      return identifier === other.identifier();
-    };
-    return that;
-  }
 
-  Zaytoonah.textObject = function(options){
-    options = options || {};
-    var text = options.text,
-        that = Zaytoonah.object(options.identifier || text);
-    that.type = "text";
+    Z.create = function(module, options){
+      var initial = {};
+      initial.extend = function(mod,opts){
+        extend.call(initial, mod, opts);
+        return this;
+      }
+      if(module){
+        initial.extend(module, options);
+      }
+      return initial;
+    }
+    return Z;
+  })();
 
+  // Zee.create('audio', options).extend('text', options)
+
+  Zee.text = function(object, options){
+    var that = object;
+    that.text = options.text;
+    that.hasText = true;
     var getText = function(){
       return text;
     }
-    that.getText = getText;
     return that;
   }
 
-  Zaytoonah.imageObject = function(options){
-    options = options || {};
-    var image = null,
-        imageURL = options.imageURL,
-        imageLoaded = false,
-        that = Zaytoonah.object(options.identifier);
-    that.type = "image";
+  Zee.image = function(object, options){
+    var that = object;
+    that.imageURL = options.imageURL;
+    that.imageLoaded = false;
+    that.hasImage = true;
 
     var load = function(){
-      var assetLoader = Zaytoonah.getAssetLoader();
-      assetLoader.addAsset(imageURL, "image")
-      .then( function(loadedImage) {
-        image = loadedImage;
-        imageLoaded = true;
-      }, console.log );
+      if(!that.imageLoaded){
+        var assetLoader = Zee.getAssetLoader();
+        assetLoader.addAsset(that.imageURL, "image")
+        .then( function(image) {
+          that.image = image;
+          that.imageLoaded = true;
+        }, console.error );
+      }
     }
-    that.load = load;
-
-    var getImage = function(){
-      return image;
-    }
-    that.getImage = getImage;
-
-    var getImageURL = function(){
-      return imageURL;
-    }
-    that.getImageURL = getImageURL;
+    that.loadImage = load;
 
     load();
     return that;
   }
 
-  Zaytoonah.audioObject = function(options){
-    options = options || {};
-    var audio = null,
-        source = null,
-        audioURL = options.audioURL,
-        audioLoaded = false,
-        context = Zaytoonah.getContext();
-        that = Zaytoonah.object(options.identifier);
-    that.type = "audio";
+  Zee.audio = function(object, options){
+    var that = object;
+    var context = Zee.getContext();
+    var source;
+    var audio;
+    that.audioURL = options.audioURL;
+    that.audioLoaded = false;
+    that.hasAudio = true;
 
     var load = function(){
-      var assetLoader = Zaytoonah.getAssetLoader();
-      assetLoader.addAsset(audioURL, "audio").then( function(buffer){
+      var assetLoader = Zee.getAssetLoader();
+      assetLoader.addAsset(that.audioURL, "audio").then( function(buffer){
         audio = buffer;
-        audioLoaded = true;
+        that.audioLoaded = true;
       }, console.log);
     }
-    that.load = load;
-
-    var getAudio = function(){
-      return audio;
-    }
-    that.getAudio = getAudio;
+    that.loadAudio = load;
 
     var play = function(){
-      if(audioLoaded){
+      if(that.audioLoaded){
         source = context.createBufferSource(); // creates a sound source
         source.buffer = audio;                     // tell the source which sound to play
         source.connect(context.destination);       // connect the source to the context's destination (the speakers)
         source.start(0);                           // play the source now
       }
     }
-    that.play = play;
+    that.playAudio = play;
 
     var stop = function(){
       if(source){
         source.stop();
       }
     }
-    that.stop = stop;
+    that.stopAudio = stop;
 
     load();
     return that;
