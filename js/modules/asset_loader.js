@@ -1,5 +1,5 @@
 (function(){
-  Zaytoonah = window.Zaytoonah || {};
+  Zee = window.Zee;
   var context;
   window.addEventListener('load', function(){
     assetLoader.init();
@@ -75,10 +75,10 @@
       return Q.allSettled(promises)
     }
   };
-  Zaytoonah.getAssetLoader = function(){
+  Zee.getAssetLoader = function(){
     return assetLoader;
   }
-  Zaytoonah.getContext = function(){
+  Zee.getContext = function(){
     return context;
   }
 })();
