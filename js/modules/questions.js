@@ -1,6 +1,6 @@
 (function(){
-  Zee = window.Zee;
-  Zee.mCquestion = function(options){
+  App = window.App;
+  App.mCquestion = function(options){
     options = options || {};
     var that = {};
     var correctAnswer = options.correctAnswer;

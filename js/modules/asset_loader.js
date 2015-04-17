@@ -1,5 +1,5 @@
 (function(){
-  Zee = window.Zee;
+  App = window.App;
   var context;
   window.addEventListener('load', function(){
     assetLoader.init();
@@ -75,10 +75,10 @@
       return Q.allSettled(promises)
     }
   };
-  Zee.getAssetLoader = function(){
+  App.getAssetLoader = function(){
     return assetLoader;
   }
-  Zee.getContext = function(){
+  App.getContext = function(){
     return context;
   }
 })();

@@ -1,9 +1,9 @@
 (function(){
-  window.Zee = (function(){
+  window.App = (function(){
     var Z = {mixins:{}};
     var extend = function(module, options){
-      if(typeof Zee.mixins[module] === 'function'){
-        return Zee.mixins[module](this, options);
+      if(typeof App.mixins[module] === 'function'){
+        return App.mixins[module](this, options);
       }
       return this;
     }
@@ -21,9 +21,9 @@
     return Z;
   })();
 
-  // t = Zee.create().extend('text', {text:'momma'}).extend('audio',{audioURL:""}).extend('image', {imageURL:""})
+  // t = App.create().extend('text', {text:'momma'}).extend('audio',{audioURL:""}).extend('image', {imageURL:""})
 
-  Zee.mixins.text = function(object, options){
+  App.mixins.text = function(object, options){
     var that = object;
     that.text = options.text;
     that.hasText = true;
@@ -33,7 +33,7 @@
     return that;
   }
 
-  Zee.mixins.image = function(object, options){
+  App.mixins.image = function(object, options){
     var that = object;
     that.imageURL = options.imageURL;
     that.imageLoaded = false;
@@ -41,7 +41,7 @@
 
     var load = function(){
       if(!that.imageLoaded){
-        var assetLoader = Zee.getAssetLoader();
+        var assetLoader = App.getAssetLoader();
         assetLoader.addAsset(that.imageURL, "image")
         .then( function(image) {
           that.image = image;
@@ -55,9 +55,9 @@
     return that;
   }
 
-  Zee.mixins.audio = function(object, options){
+  App.mixins.audio = function(object, options){
     var that = object;
-    var context = Zee.getContext();
+    var context = App.getContext();
     var source;
     var audio;
     that.audioURL = options.audioURL;
@@ -65,7 +65,7 @@
     that.hasAudio = true;
 
     var load = function(){
-      var assetLoader = Zee.getAssetLoader();
+      var assetLoader = App.getAssetLoader();
       assetLoader.addAsset(that.audioURL, "audio").then( function(buffer){
         audio = buffer;
         that.audioLoaded = true;
