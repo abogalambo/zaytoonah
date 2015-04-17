@@ -1,9 +1,9 @@
 (function(){
-  Zee = (function(){
-    var Z = {};
+  window.Zee = (function(){
+    var Z = {mixins:{}};
     var extend = function(module, options){
-      if(typeof Zee[module] === 'function'){
-        return Zee[module](this, options);
+      if(typeof Zee.mixins[module] === 'function'){
+        return Zee.mixins[module](this, options);
       }
       return this;
     }
@@ -23,7 +23,7 @@
 
   // t = Zee.create().extend('text', {text:'momma'}).extend('audio',{audioURL:""}).extend('image', {imageURL:""})
 
-  Zee.text = function(object, options){
+  Zee.mixins.text = function(object, options){
     var that = object;
     that.text = options.text;
     that.hasText = true;
@@ -33,7 +33,7 @@
     return that;
   }
 
-  Zee.image = function(object, options){
+  Zee.mixins.image = function(object, options){
     var that = object;
     that.imageURL = options.imageURL;
     that.imageLoaded = false;
@@ -55,7 +55,7 @@
     return that;
   }
 
-  Zee.audio = function(object, options){
+  Zee.mixins.audio = function(object, options){
     var that = object;
     var context = Zee.getContext();
     var source;
