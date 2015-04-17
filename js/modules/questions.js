@@ -1,18 +1,17 @@
 (function(){
-  Zaytoonah = window.Zaytoonah || {};
-  Zaytoonah.mCquestion = function(options){
+  Zee = window.Zee;
+  Zee.mCquestion = function(options){
     options = options || {};
     var that = {};
-    var question = options.question
-    var answers = options.answers || [];
-    that.type = "mc";
-    that.question = question;
-    that.answers = answers;
+    var correctAnswer = options.correctAnswer;
+    that.isMultipleChoice = true;
+    that.question = options.question;
+    that.answers = options.answers || [];
 
-    var check = function(choice){
-      return question.matches(choice);
+    var checkAnswer = function(answer){
+      return correctAnswer === answer;
     }
-    that.check = check;
+    that.checkAnswer = checkAnswer;
     return that;
   }
 })();

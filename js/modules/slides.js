@@ -1,22 +1,22 @@
 (function(){
-  Zaytoonah = window.Zaytoonah || {};
-  Zaytoonah.slide = function(){
+  Zee = window.Zee;
+  Zee.slide = function(){
     var that = {};
     return that;
   }
 
-  Zaytoonah.introSlide = function(options){
-    var that = Zaytoonah.slide();
-    that.type = "intro"
+  Zee.introSlide = function(options){
+    var that = Zee.slide();
+    that.isIntroSlide = true
     that.intro = options.intro;
     that.audio = options.audio;
     return that;
   }
 
-  Zaytoonah.questionSlide = function(q){
-    var that = Zaytoonah.slide();
+  Zee.questionSlide = function(q){
+    var that = Zee.slide();
+    that.isQuestionSlide = true
     that.question = q;
-    that.type = "question"
     return that;
   }
 })();
