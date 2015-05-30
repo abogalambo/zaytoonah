@@ -15,6 +15,7 @@
   <div id='content'>
   </div>
   <script src="js/modules/objects.js"></script>
+  <script src="js/modules/events.js"></script>
   <script src="js/lib/q.js"></script>
   <script src="js/modules/asset_loader.js"></script>
   <script src="js/modules/questions.js"></script>
@@ -28,7 +29,8 @@
       getInitialState: function() {
         return {
           slides: [],
-          current: 0
+          current: 0,
+          max: 0
         };
       },
       nextSlide: function(){
@@ -36,7 +38,7 @@
         var current = this.state.current
         if((current + 1) < slides.length){
           slides[current].blur();
-          this.setState({current: current + 1});
+          this.setState({current: current + 1, max: Math.max(this.state.max, current + 1)});
           slides[current + 1].focus();
         }
       },
@@ -60,11 +62,47 @@
           slides[0].focus();
         }
       },
+      checkAnswer: function(question,answer){
+        if(question.checkAnswer(answer)){
+          alert('correct');
+        }else{
+          alert('wrong');
+        }
+      },
       componentDidMount: function() {
+        var _this = this;
+        App.pubsub.subscribe('action:question-answered', function(question, answer){
+          _this.checkAnswer(question,answer)
+          _this.nextSlide();
+        });
+
+        App.pubsub.subscribe('action:next-slide', function(question, answer){
+          if(_this.state.current < _this.state.max || !_this.state.slides[_this.state.current].isQuestionSlide){
+            _this.nextSlide();
+          }
+        });
+
+        App.pubsub.subscribe('action:prev-slide', function(question, answer){
+          _this.prevSlide();
+        });
+
+        document.onkeydown = function(e){
+          App.pubsub.trigger('action:key-down', e);
+        }
+
+        App.pubsub.subscribe('action:key-down', this.handleKeyDown.bind(this));
+
         var slides = App.getFactory().createSlides(window.data);
         App.getAssetLoader().load().then(function(){
           this.setSlides(slides);
         }.bind(this), console.error);
+      },
+      handleKeyDown: function(e){
+        if(e.which == 39){
+          App.pubsub.trigger('action:prev-slide');
+        }else if(e.which == 37 || e.which == 32){
+          App.pubsub.trigger('action:next-slide');
+        }
       },
       render: function() {
         var _this = this;
@@ -77,7 +115,7 @@
         });
 
         return (
-          <div className="quiz container-fluid text-center" >
+          <div className="quiz container-fluid text-center">
             {slides}
           </div>
         );
@@ -116,20 +154,16 @@
     var Question = React.createClass({
       answerWith: function(answer){
         var question = this.props.question
-        if(question.checkAnswer(answer)){
-          alert('correct');
-        }else{
-          alert('wrong');
-        }
+        App.pubsub.trigger('action:question-answered', question, answer)
       },
       render: function() {
         var question = this.props.question
-        var that = this;
+        var _this = this;
         var answers = question.answers.map(function(a){
           return(
             <div>
               <Element el={a} />
-              <div onClick={that.answerWith.bind(that, a)}> Pick this </div>
+              <div onClick={_this.answerWith.bind(_this, a)}> Pick this </div>
             </div>
           );
         });
