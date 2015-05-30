@@ -19,10 +19,10 @@
         if(options.audio){
           slideOptions.audio = this.createAudio(options.audio);
         }
-        slide = Zaytoonah.introSlide(slideOptions);
+        slide = App.introSlide(slideOptions);
       }else if(options.question){
         var question = this.createQuestion(options.question)
-        slide = Zaytoonah.questionSlide(question);
+        slide = App.questionSlide(question);
       }
       return slide;
     },
@@ -52,38 +52,28 @@
         }
       }
 
-      return Zaytoonah.mCquestion({
+      return App.mCquestion({
         question: questionBody,
-        answers: answers
+        answers: answers,
+        correctAnswer: answers[options.correctAnswer]
       });
     },
 
     createAudio: function(file){
       var url= "/sounds/" + file
-      var identifier = (/\/([a-z1-9]*)\./ig).exec(url);
-      return Zaytoonah.audioObject({
-        audioURL: url,
-        identifier: identifier[1]
-      });
+      return App.create('audio',{audioURL:url});
     },
 
     createImage: function(file){
       var url= "/images/" + file
-      var identifier = (/\/([a-z1-9]*)\./ig).exec(url);
-      return Zaytoonah.imageObject({
-        imageURL: url,
-        identifier: identifier[1]
-      });
+      return App.create('image', {imageURL:url});
     },
 
-    createText: function(options){
-      return Zaytoonah.textObject({
-        text: options[0],
-        identifier: options[1]
-      });
+    createText: function(text){
+      return App.create('text', {text:text});
     }
   };
-  Zaytoonah.getFactory = function(){
+  App.getFactory = function(){
     return factory;
   }
 })();

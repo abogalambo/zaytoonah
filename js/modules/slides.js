@@ -10,6 +10,9 @@
     that.isIntroSlide = true
     that.intro = options.intro;
     that.audio = options.audio;
+    that.focus = function(){
+      this.audio.playAudio();
+    }
     return that;
   }
 
@@ -17,6 +20,9 @@
     var that = App.slide();
     that.isQuestionSlide = true
     that.question = q;
+    that.focus = function(){
+      this.question.focus();
+    }
     return that;
   }
 })();

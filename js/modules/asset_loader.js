@@ -1,6 +1,6 @@
 (function(){
   App = window.App;
-  var context;
+  var contextDeferred = Q.defer();
   window.addEventListener('load', function(){
     assetLoader.init();
   }, false);
@@ -16,19 +16,22 @@
 
     request.onload = function() {
       // Asynchronously decode the audio file data in request.response
-      context.decodeAudioData(
-        request.response,
-        function(buffer) {
-          if (!buffer) {
+      contextDeferred.promise.then(function(context){
+        context.decodeAudioData(
+          request.response,
+          function(buffer) {
+            if (!buffer) {
+              deferred.reject(new Error('error decoding file data: ' + url));
+              return;
+            }
+            deferred.resolve(buffer);
+          },
+          function(error) {
             deferred.reject(new Error('error decoding file data: ' + url));
-            return;
           }
-          deferred.resolve(buffer);
-        },
-        function(error) {
-          deferred.reject(new Error('error decoding file data: ' + url));
-        }
-      );
+        );
+      })
+
     }
 
     request.onerror = function() {
@@ -57,7 +60,8 @@
     init: function(){
       // Fix up prefixing
       AudioContext = window.AudioContext || window.webkitAudioContext;
-      context = new AudioContext();
+      var context = new AudioContext();
+      contextDeferred.resolve(context);
     },
 
     addAsset: function(url, type){
@@ -79,6 +83,6 @@
     return assetLoader;
   }
   App.getContext = function(){
-    return context;
+    return contextDeferred.promise;
   }
 })();

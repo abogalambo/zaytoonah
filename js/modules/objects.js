@@ -57,7 +57,6 @@
 
   App.mixins.audio = function(object, options){
     var that = object;
-    var context = App.getContext();
     var source;
     var audio;
     that.audioURL = options.audioURL;
@@ -75,10 +74,12 @@
 
     var play = function(){
       if(that.audioLoaded){
-        source = context.createBufferSource(); // creates a sound source
-        source.buffer = audio;                     // tell the source which sound to play
-        source.connect(context.destination);       // connect the source to the context's destination (the speakers)
-        source.start(0);                           // play the source now
+        App.getContext().then(function(context){
+          source = context.createBufferSource();     // creates a sound source
+          source.buffer = audio;                     // tell the source which sound to play
+          source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+          source.start(0);                           // play the source now
+        });
       }
     }
     that.playAudio = play;

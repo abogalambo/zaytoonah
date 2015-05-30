@@ -7,6 +7,11 @@
     that.isMultipleChoice = true;
     that.question = options.question;
     that.answers = options.answers || [];
+    that.focus = function(){
+      if(this.question.hasAudio){
+        this.question.playAudio();
+      }
+    }
 
     var checkAnswer = function(answer){
       return correctAnswer === answer;
