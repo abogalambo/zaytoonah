@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="zaytoonah">
+<html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,33 +12,136 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div id="main-container" class="container-fluid text-center" ng-controller="QuizController as quiz">
-    <div  class="page row"
-          ng-repeat="slide in quiz.slides"
-          ng-style="quiz.computeStyle(slide)"
-          ng-if="quiz.loaded"
-          ng-controller="SlideController as sc"
-    >
-
-      <div ng-if="slide.type === 'intro'">
-        {{slide.intro}}
-        <br/>
-        Press space to continue
-      </div>
-
-      <div ng-if="slide.type === 'question'">
-        <question ng-init="questionCtrl.setQuestion(slide.question)"></question>
-      </div>
-    </div>
+  <div id='content'>
   </div>
+  <script src="js/modules/objects.js"></script>
   <script src="js/lib/q.js"></script>
   <script src="js/modules/asset_loader.js"></script>
-  <script src="js/modules/objects.js"></script>
   <script src="js/modules/questions.js"></script>
   <script src="js/modules/slides.js"></script>
   <script src="js/modules/factory.js"></script>
-  <script src="js/lib/angular.min.js"></script>
-  <script src="js/lib/angular-ui-router.min.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/react/react.js"></script>
+  <script src="js/react/JSXTransformer.js"></script>
+  <script src="js/my_app.js"></script>
+  <script type="text/jsx">
+    var Quiz = React.createClass({
+      getInitialState: function() {
+        return {slides: []};
+      },
+      componentDidMount: function() {
+        this.setState({slides: window.slides});
+      },
+      render: function() {
+        var slides = this.state.slides.map(function(slide){
+          return (
+            <Slide slide={slide} />
+          );
+        });
+
+        return (
+          <div className="quiz">
+            <h1>slides:</h1>
+            {slides}
+          </div>
+        );
+      }
+    });
+
+    var Slide = React.createClass({
+      focus: function(){
+        var slide = this.props.slide;
+        slide.focus();
+      },
+      render: function() {
+        var slide = this.props.slide;
+        var slideContent;
+        if(slide.isIntroSlide){
+          slideContent = (
+            <div>
+              {slide.intro}
+              <Element el={slide.audio} />
+            </div>
+          )
+        }else if(slide.isQuestionSlide){
+          slideContent = (
+            <Question question={slide.question} />
+          )
+        }
+        return (
+          <div className="slide">
+            {slideContent}
+            <hr />
+          </div>
+        );
+      }
+    });
+
+    var Question = React.createClass({
+      answerWith: function(answer){
+        var question = this.props.question
+        if(question.checkAnswer(answer)){
+          alert('correct');
+        }else{
+          alert('wrong');
+        }
+      },
+      render: function() {
+        var question = this.props.question
+        var that = this;
+        var answers = question.answers.map(function(a){
+          return(
+            <div>
+              <Element el={a} />
+              <div onClick={that.answerWith.bind(that, a)}> Pick this </div>
+            </div>
+          );
+        });
+        return (
+          <div className="question">
+            <div class="question-body">
+              <Element el={question.question} />
+            </div>
+            <div class="answers-list">
+              {answers}
+            </div>
+          </div>
+        );
+      }
+    });
+
+    var Element = React.createClass({
+      play: function(){
+        this.props.el.playAudio();
+      },
+      render: function() {
+        var contents = [];
+        var el = this.props.el;
+        if(el.hasText){
+          contents.push(
+            <div>{el.getText}</div>
+          );
+        }else if(el.hasImage){
+          contents.push(
+            <img src={el.imageURL} />
+          );
+        }else if(el.hasAudio){
+          contents.push(
+            <button onClick={this.play}>Play</button>
+          );
+        }
+        return (
+          <div className="element">
+            {contents}
+          </div>
+        );
+      }
+    });
+
+    window.slides = App.getFactory().createSlides(window.data);
+    React.render(
+      <Quiz />,
+      document.getElementById('content')
+    );
+  </script>
 </body>
 </html>
