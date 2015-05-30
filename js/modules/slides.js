@@ -11,7 +11,13 @@
     that.intro = options.intro;
     that.audio = options.audio;
     that.focus = function(){
-      this.audio.playAudio();
+      if(this.audio){
+        this.audio.playAudio();
+      }
+    }
+    that.blur = function(){
+      if(this.audio)
+        this.audio.stopAudio();
     }
     return that;
   }
@@ -22,6 +28,9 @@
     that.question = q;
     that.focus = function(){
       this.question.focus();
+    }
+    that.blur = function(){
+      this.question.blur();
     }
     return that;
   }

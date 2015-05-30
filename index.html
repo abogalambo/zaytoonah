@@ -26,21 +26,58 @@
   <script type="text/jsx">
     var Quiz = React.createClass({
       getInitialState: function() {
-        return {slides: []};
+        return {
+          slides: [],
+          current: 0
+        };
+      },
+      nextSlide: function(){
+        var slides = this.state.slides
+        var current = this.state.current
+        if((current + 1) < slides.length){
+          slides[current].blur();
+          this.setState({current: current + 1});
+          slides[current + 1].focus();
+        }
+      },
+      prevSlide: function(){
+        var slides = this.state.slides
+        var current = this.state.current
+        if((current - 1) >= 0){
+          slides[current].blur();
+          this.setState({current: current - 1});
+          slides[current - 1].focus();
+        }
+      },
+      computeStyle: function(index){
+        var multiplier = 1;
+        // if(this.currentDir == 'ltr') multiplier = -1;
+        return {left: 100 * multiplier * (this.state.current - index) + "%"}
+      },
+      setSlides:function(slides){
+        this.setState({slides: slides});
+        if(slides.length > 0){
+          slides[0].focus();
+        }
       },
       componentDidMount: function() {
-        this.setState({slides: window.slides});
+        var slides = App.getFactory().createSlides(window.data);
+        App.getAssetLoader().load().then(function(){
+          this.setSlides(slides);
+        }.bind(this), console.error);
       },
       render: function() {
-        var slides = this.state.slides.map(function(slide){
+        var _this = this;
+        var slides = this.state.slides.map(function(slide, index){
           return (
-            <Slide slide={slide} />
+            <div className='page' style={_this.computeStyle(index)}>
+              <Slide slide={slide} />
+            </div>
           );
         });
 
         return (
-          <div className="quiz">
-            <h1>slides:</h1>
+          <div className="quiz container-fluid text-center" >
             {slides}
           </div>
         );
@@ -137,7 +174,6 @@
       }
     });
 
-    window.slides = App.getFactory().createSlides(window.data);
     React.render(
       <Quiz />,
       document.getElementById('content')

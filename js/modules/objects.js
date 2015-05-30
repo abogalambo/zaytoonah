@@ -59,28 +59,30 @@
     var that = object;
     var source;
     var audio;
+    var loadPromise;
     that.audioURL = options.audioURL;
-    that.audioLoaded = false;
     that.hasAudio = true;
 
     var load = function(){
       var assetLoader = App.getAssetLoader();
-      assetLoader.addAsset(that.audioURL, "audio").then( function(buffer){
-        audio = buffer;
-        that.audioLoaded = true;
-      }, console.log);
+      if(!loadPromise){
+        loadPromise = assetLoader.addAsset(that.audioURL, "audio").then( function(buffer){
+          audio = buffer;
+        }, console.error);
+      }
+      return loadPromise;
     }
     that.loadAudio = load;
 
     var play = function(){
-      if(that.audioLoaded){
+      load().then(function(){
         App.getContext().then(function(context){
           source = context.createBufferSource();     // creates a sound source
           source.buffer = audio;                     // tell the source which sound to play
           source.connect(context.destination);       // connect the source to the context's destination (the speakers)
           source.start(0);                           // play the source now
         });
-      }
+      }, console.error);
     }
     that.playAudio = play;
 

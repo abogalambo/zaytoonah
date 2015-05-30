@@ -12,6 +12,11 @@
         this.question.playAudio();
       }
     }
+    that.blur = function(){
+      if(this.question.hasAudio){
+        this.question.stopAudio();
+      }
+    }
 
     var checkAnswer = function(answer){
       return correctAnswer === answer;
